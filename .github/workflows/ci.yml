@@ -1,0 +1,41 @@
+name: CI – LangChain RAG Frontend (Next.js)
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Next.js Build Validation
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Node version compatible with modern Next.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "pnpm"
+
+      # Enable pnpm (repo has pnpm-lock.yaml)
+      - name: Enable pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@9 --activate
+          pnpm --version
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # ❌ Skip ESLint (avoids config/plugin failures)
+      # ESLint should be a separate optional job later
+
+      - name: Build Next.js app
+        env:
+          # Dummy envs to prevent build-time crashes
+          NEXT_PUBLIC_API_URL: http://localhost
+        run: pnpm build
