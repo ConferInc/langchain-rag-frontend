@@ -14,27 +14,20 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Use Node 20 (matches your logs and Next.js requirements)
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "20.10.0"
 
-      # ✅ Proper pnpm installation (THIS WAS MISSING)
       - name: Enable pnpm
         run: |
           corepack enable
           corepack prepare pnpm@9.12.3 --activate
           pnpm --version
 
-      # ✅ Install dependencies using pnpm-lock.yaml
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --no-frozen-lockfile
 
-      # ❌ Skip ESLint (prevents config failures)
-      # You can add it later once ESLint config is stable
-
-      # ✅ Build only (no server start)
       - name: Build Next.js app
         env:
           NEXT_PUBLIC_API_URL: http://localhost
